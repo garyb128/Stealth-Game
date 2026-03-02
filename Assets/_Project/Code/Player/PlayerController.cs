@@ -15,6 +15,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float turnInputThreshold = 0.05f;
     [SerializeField, Range(0.5f,1f)] float sprintInputThreshold = 0.9f; // full-tilt threshold
     float standingHeight;
+    float footstepTimer; // Will be replaced with movement based checks
+    bool wasGrounded; // Was the player grounded?
 
     [Header("Movement Feel")]
     [SerializeField] float acceleration = 18f;
@@ -44,7 +46,7 @@ public class PlayerController : MonoBehaviour
     {
         if(characterController == null) characterController = GetComponent<CharacterController>();
         if(playerInputHandler == null)  playerInputHandler = GetComponent<PlayerInputHandler>();
-        //if(playerNoise == null) playerNoise = GetComponent<PlayerNoise>();
+        if(playerNoise == null) playerNoise = GetComponent<PlayerNoise>();
         standingHeight = characterController.height;
     }
 
@@ -126,10 +128,16 @@ public class PlayerController : MonoBehaviour
                 characterController.height = standingHeight; // Reset height when not crouching
             }
 
-            if(playerNoise != null)
+            // Simple footstep emit
+            if (isGrounded && planarVelocity.magnitude > 0.1f)
             {
-                playerNoise.EmitFootstep(isSprinting,isCrouching);
-                playerNoise.EmitLanding(isGrounded ? 1f : 0f);
+                float interval = isSprinting ? 0.3f : (isCrouching ? 0.6f : 0.45f);
+                footstepTimer -= Time.deltaTime;
+                if (footstepTimer <= 0f)
+                {
+                    playerNoise.EmitFootstep(isSprinting, isCrouching);
+                    footstepTimer = interval;
+                }
             }
 
             // Update coyote time counter
@@ -168,6 +176,12 @@ public class PlayerController : MonoBehaviour
             //Apply gravity
             velocity.y += gravity * Time.deltaTime;
             characterController.Move(velocity * Time.deltaTime);
+
+            // In Update:
+            if (isGrounded && !wasGrounded)
+                playerNoise.EmitLanding(1f);
+
+            wasGrounded = isGrounded;
         }
        
     }

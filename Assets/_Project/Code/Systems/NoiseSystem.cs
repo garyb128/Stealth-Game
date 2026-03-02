@@ -28,7 +28,7 @@ public class NoiseSystem : MonoBehaviour
 
         for (int i = 0; i < count; i++)
         {
-            var p = hits[i].GetComponentInChildren<NPCPerception>();
+            var p = hits[i].GetComponentInParent<NPCPerception>();
             if (p == null) continue;
 
             float dist = Vector3.Distance(hits[i].transform.position,pos);

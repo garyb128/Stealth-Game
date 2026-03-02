@@ -52,6 +52,8 @@ public class NPCBrain : MonoBehaviour
     float searchTimer;
     float repathTimer;
     float searchLookTimer;
+    float alertMinDuration = 3f;
+    float alertTimer;
     Vector3 searchAnchor; // usually seen last position when starting search
     Vector3 currentSearchPoint; // current point we're searching towards
 
@@ -63,6 +65,7 @@ public class NPCBrain : MonoBehaviour
     NavMeshAgent agent;
     [SerializeField] EnemyState enemyState;
     public event Action<NPCBrain,EnemyState,EnemyState> OnStateChanged;
+    public event Action<NPCBrain> OnPlayerContact;
 
     public EnemyState CurrentState => enemyState;
 
@@ -211,12 +214,10 @@ public class NPCBrain : MonoBehaviour
 
                 break;
             case EnemyState.Alert:
-                //Alert state behavior here
                 if (nPCPatrol != null)
                     nPCPatrol.enabled = false;
-
                 agent.updateRotation = true;
-
+                alertTimer = alertMinDuration; // reset timer on entering alert
                 break;
             case EnemyState.Search:
                 //Search behaviour
@@ -389,7 +390,7 @@ public class NPCBrain : MonoBehaviour
             return;
 
         //If we can see the target, reset lose sight timer
-        if(npcPerception.CanSeeTarget)
+        if (npcPerception.HasLineOfSight)
         {
             agent.SetDestination(target.position);
             loseSightTimer = loseSightGraceTime;
@@ -399,17 +400,19 @@ public class NPCBrain : MonoBehaviour
         //If we can't see the target, start lose sight timer
         loseSightTimer -= Time.deltaTime;
 
-        // If suspicion has dropped enough, stop chasing and go Search
-        if (npcPerception.Detection <= alertStopThreshold)
+        alertTimer -= Time.deltaTime;
+
+        if (npcPerception.Detection <= alertStopThreshold && alertTimer <= 0f)
         {
             SwitchState(EnemyState.Search);
             return;
         }
 
-        //Keep moving to last known position while grace time runs out
-        agent.SetDestination(npcPerception.LastSeenPosition);
+        // Keep moving to last seen position
+        if (npcPerception.LastSeenPosition != Vector3.negativeInfinity)
+            agent.SetDestination(npcPerception.LastSeenPosition);
 
-        if(loseSightTimer <= 0f)
+        if (loseSightTimer <= 0f && alertTimer <= 0f)
         {
             SwitchState(EnemyState.Search);
         }
@@ -532,5 +535,15 @@ public class NPCBrain : MonoBehaviour
         this.repathInterval = repathInterval;
         this.scanDurationPerPoint = scanDurationPerPoint;
         this.alertThreshold = alertThreshold;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!other.CompareTag("Player")) return;
+
+        npcPerception.Detection = 1f;
+        npcPerception.SetLastSeenPosition(target.position);
+        OnPlayerContact?.Invoke(this);
+        SwitchState(EnemyState.Alert);
     }
 }

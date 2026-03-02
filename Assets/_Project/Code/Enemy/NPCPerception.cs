@@ -27,18 +27,20 @@ public class NPCPerception : MonoBehaviour
     float detectionCapFar = 0.0f;   // max detection at view distance edge
     float decayRateLow = 1.0f;   // decay when detection is near 0
     float decayRateHigh = 0.2f;   // decay when detection is near 1
-
+   
     [Header("Debug")]
     [SerializeField] private bool debugLogStateChanges = true;
     [SerializeField] private bool drawGizmos = true;
     [SerializeField] private int coneSegments = 16;
 
-    public float Detection { get; private set; }
+    public float Detection { get; set; }
     public Vector3 LastSeenPosition { get; private set; }
     public bool CanSeeTarget { get; private set; }
 
+
     public bool InRange { get; private set; }
     public bool InFOV { get; private set; }
+    public bool HasLineOfSight { get; private set; }
     public bool CanPotentiallySee { get; private set; }
 
     bool lastCanPotentiallySee = false;
@@ -134,6 +136,8 @@ public class NPCPerception : MonoBehaviour
 
         bool seenThisFrame = (CanPotentiallySee && inSight);
 
+        HasLineOfSight = seenThisFrame;
+
         // A player in near-darkness shouldn't be seen at all
         bool effectivelySeen = seenThisFrame && (playerExposure == null || playerExposure.Exposure > 0.05f);
 
@@ -161,6 +165,8 @@ public class NPCPerception : MonoBehaviour
     {
         LastHeardPosition = pos;
         LastHeardTime = Time.time;
+
+        Debug.Log("heard noise");
 
         Detection = Mathf.Clamp01(Detection + strength01);
     }
@@ -233,4 +239,8 @@ public class NPCPerception : MonoBehaviour
         }
     }
 
+    public void SetLastSeenPosition(Vector3 position)
+    {
+        LastSeenPosition = position;
+    }
 }
