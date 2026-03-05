@@ -17,6 +17,7 @@ public class NPCPerception : MonoBehaviour
 
     [Header("Hearing")]
     [SerializeField] float hearingFallOff = 1.0f;
+    [SerializeField] private float hearingDetectionCap = 0.5f; // can't push past investigate threshold via sound alone
     public Vector3 LastHeardPosition { get; private set; }
     public float LastHeardTime { get; private set; }
 
@@ -47,10 +48,11 @@ public class NPCPerception : MonoBehaviour
 
     private void Awake()
     {
-        if(target != null)
-        {
+        LastSeenPosition = Vector3.negativeInfinity;
+        LastHeardPosition = Vector3.negativeInfinity;
+
+        if (target != null)
             playerExposure = target.GetComponentInChildren<PlayerExposure>();
-        }
     }
 
     void Update()
@@ -138,6 +140,11 @@ public class NPCPerception : MonoBehaviour
 
         HasLineOfSight = seenThisFrame;
 
+        // Always update last seen position when we have raw line of sight
+        // regardless of exposure — guard tracks where you are if they can see you
+        if (HasLineOfSight)
+            LastSeenPosition = target.position;
+
         // A player in near-darkness shouldn't be seen at all
         bool effectivelySeen = seenThisFrame && (playerExposure == null || playerExposure.Exposure > 0.05f);
 
@@ -145,9 +152,7 @@ public class NPCPerception : MonoBehaviour
 
         if (effectivelySeen)
         {
-            Debug.Log($"[NPCPerception] effectivelySeen true. Exposure: {playerExposure?.Exposure}, LastSeenPosition set to: {target.position}");
             float exposure = playerExposure.Exposure;
-            LastSeenPosition = target.position;
 
             float t = distToTarget / viewDistance;
             float speed = Mathf.Lerp(detectionRateClose, detectionRateFar, t) * exposure;
@@ -166,9 +171,8 @@ public class NPCPerception : MonoBehaviour
         LastHeardPosition = pos;
         LastHeardTime = Time.time;
 
-        Debug.Log("heard noise");
-
-        Detection = Mathf.Clamp01(Detection + strength01);
+        float newDetection = Mathf.Clamp01(Detection + strength01 * hearingFallOff);
+        Detection = Mathf.Min(newDetection, hearingDetectionCap);
     }
 
     public void Configure(

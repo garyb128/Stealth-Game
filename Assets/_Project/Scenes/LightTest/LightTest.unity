@@ -373,7 +373,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1933899438936945497, guid: effce21bc1cc0884bb5bb0a01e02d778, type: 3}
       propertyPath: m_Radius
-      value: 0.8
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3224729753544045901, guid: effce21bc1cc0884bb5bb0a01e02d778, type: 3}
       propertyPath: m_Enabled
@@ -427,6 +427,10 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 1598602304}
+    - target: {fileID: 7775435981481033202, guid: effce21bc1cc0884bb5bb0a01e02d778, type: 3}
+      propertyPath: npcArchetype
+      value: 
+      objectReference: {fileID: 11400000, guid: 99ee939415b54884483cc9df04de9144, type: 2}
     - target: {fileID: 7911456008608855935, guid: effce21bc1cc0884bb5bb0a01e02d778, type: 3}
       propertyPath: target
       value: 

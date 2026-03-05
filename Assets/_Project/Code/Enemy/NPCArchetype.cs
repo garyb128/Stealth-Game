@@ -3,6 +3,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "NewNPCArchetype", menuName = "NPC/Archetype")]
 public class NPCArchetype : ScriptableObject
 {
+    // State
+    [Header("Default State")]
+    public NPCBrain.EnemyState defaultState;
+
     // Patrol
     [Header("Patrol")]
     public float patrolWaitTime = 1.5f;        // seconds to pause at each point
@@ -49,6 +53,7 @@ public class NPCArchetype : ScriptableObject
     [HideInInspector] public float repathInterval = 0.5f;
     [HideInInspector] public float scanDurationPerPoint = 1.5f;
     [HideInInspector] public float alertThreshold = 0.8f;
+    [SerializeField] private float alertMinDuration = 3f;
 
 
     // Convenience method to apply archetype settings to an NPCPatrol component
@@ -86,23 +91,25 @@ public class NPCArchetype : ScriptableObject
         if (brain != null)
         {
             brain.Configure(
+                defaultState,
+                investigateStartThreshold,
+                investigateStopThreshold,
+                alertThreshold,
+                alertStopThreshold,
                 investigateDuration,
                 investigateArriveDistance,
                 turnSpeed,
                 newLookInterval,
-                investigateStartThreshold,
-                investigateStopThreshold,
-                investigateRepathAttempts,
                 hearingMemoryTime,
                 loseSightGraceTime,
+                alertMinDuration,
                 searchDuration,
-                alertStopThreshold,
                 searchRadius,
-                searchTries,
+                searchTries, 
                 searchArriveDistance,
-                repathInterval,
                 scanDurationPerPoint,
-                alertThreshold);
+                repathInterval
+            );
         }
     }
 }

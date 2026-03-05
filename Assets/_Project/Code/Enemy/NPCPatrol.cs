@@ -6,6 +6,7 @@ public class NPCPatrol : MonoBehaviour
 {
     [Header("Patrol Points")]
     [SerializeField] private Transform[] patrolPoints;
+    [HideInInspector] public int patrolPointsNum;
 
     [Header("Patrol Settings")]
     private float waitTime = 1.5f;        // seconds to pause at each point
@@ -39,6 +40,7 @@ public class NPCPatrol : MonoBehaviour
             // Find nearest patrol point instead of using current index
             index = FindNearestPatrolPoint();
             SetDestinationToIndex();
+            patrolPointsNum = patrolPoints.Length;
         }
     }
 

@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74824f3da1f02bb4f85c5f9cff0b8be5, type: 3}
+  m_Name: Statue
+  m_EditorClassIdentifier: Assembly-CSharp::NPCArchetype
+  defaultState: 0
+  patrolWaitTime: 1.5
+  patrolArriveDistance: 0.4
+  patrolPingPong: 1
+  waypointSnapDistance: 2
+  viewDistance: 35
+  fovDegrees: 90
+  fovStickyTime: 0.15
+  hearingFallOff: 1
+  detectionRateClose: 3
+  detectionRateFar: 0.05
+  detectionCapClose: 1
+  detectionCapFar: 0.2
+  decayRateLow: 1
+  decayRateHigh: 0.2
+  investigateDuration: 5
+  investigateArriveDistance: 0.6
+  turnSpeed: 120
+  newLookInterval: 0.75
+  investigateStartThreshold: 0.25
+  investigateStopThreshold: 0.05
+  hearingMemoryTime: 2
+  investigateRepathInterval: 0.4
+  investigateRepathAttempts: 4
+  loseSightGraceTime: 5
+  searchDuration: 4
+  alertStopThreshold: 0.15
+  searchRadius: 6
+  searchTries: 8
+  searchArriveDistance: 0.8
+  repathInterval: 0.5
+  scanDurationPerPoint: 1.5
+  alertThreshold: 0.8
+  alertMinDuration: 3
