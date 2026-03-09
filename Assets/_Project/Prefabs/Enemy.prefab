@@ -238,6 +238,8 @@ GameObject:
   - component: {fileID: 4310097656366484429}
   - component: {fileID: 3950315530832684631}
   - component: {fileID: 8923688937639750932}
+  - component: {fileID: 6220748347413751046}
+  - component: {fileID: 4172123505776222693}
   - component: {fileID: 7775435981481033202}
   - component: {fileID: 3224729753544045901}
   - component: {fileID: 7911456008608855935}
@@ -296,6 +298,31 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &6220748347413751046
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6286308802894130117}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c48fc27bf5a9a9a41ae0129f49bd6717, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NoiseListenerAuthoring
+  hearingRadius: 10
+--- !u!114 &4172123505776222693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6286308802894130117}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c28c73d4aa56d794da0db6727e06fcfa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NoiseListenerBridge
 --- !u!114 &7775435981481033202
 MonoBehaviour:
   m_ObjectHideFlags: 0
