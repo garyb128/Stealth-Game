@@ -1,9 +1,7 @@
-using System;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
-using UnityEditor.ShaderGraph.Internal;
 
 [BurstCompile]
 public partial struct NoiseListenerSystem : ISystem
@@ -28,63 +26,83 @@ public partial struct NoiseListenerSystem : ISystem
             .Build();
 
         // Fetch the noise event data into a temporary array
-        var noiseEvents = eventQuery.ToComponentDataArray<NoiseEventComponent>(Allocator.Temp);
+        var noiseEvents = eventQuery.ToComponentDataArray<NoiseEventComponent>(Allocator.TempJob);
 
-        // Step 2 - process every listener against every noise event
-
-        // SystemAPI.Query is the clean way to iterate over entities in a system
-        // This loops over every entity that has both components
-        foreach (var (listener, entity) in
-            SystemAPI.Query<RefRW<NoiseListenerComponent>>()
-            .WithEntityAccess())
+        // Step 2 - create and schedule the job
+        var job = new ProcessNoiseListenersJob 
         {
-            // RefRW means read/write access — we need to write results back
-            // RefRO would be read only
+            // Pass the noise events array to the job as read only
+            // [ReadOnly] means all threads can read it simultaneously
+            NoiseEvents = noiseEvents
+        };
 
-            for (int i = 0; i < noiseEvents.Length; i++)
-            {
-                UnityEngine.Debug.Log($"[NoiseListenerSystem] Processing {noiseEvents.Length} noise events");
+        // Schedule means run on background threads in parallel
+        // The JobHandle represents the in-progress job
+        // state.Dependency chains this job after any previously scheduled jobs
+        // that touch the same data — prevents data races automatically
+        var handle = job.ScheduleParallel(state.Dependency);
 
-                {
-                    NoiseEventComponent noiseEvent = noiseEvents[i];
+        // Tell the system this job must complete before the next system runs
+        state.Dependency = handle;
 
-                    float dist = math.distance(listener.ValueRO.Position, noiseEvent.Position);
+        // Complete ensures the job finishes before we move on to destroying events
+        // We need to wait because we're about to use EntityManager which requires
+        // all jobs touching entity data to be finished first
+        handle.Complete();
 
-                    // Is listener within range of this noise event
-                    float hearingRange = math.min(listener.ValueRO.Radius, noiseEvent.Radius);
+        // Step 3 - Dispose of array
+        noiseEvents.Dispose();
 
-                    if (dist > hearingRange) continue;
-
-                    // Calculate loudness falloff - 1 at source, 0 at edge of range
-                    float t = 1f - math.saturate(dist / hearingRange);
-                    float loudness = t * noiseEvent.Loudness;
-
-                    // Write results to the listener component
-                    // The bridge will read these back on the Monobehaviour side
-                    listener.ValueRW.WasTriggered = true;
-                    listener.ValueRW.Loudness = math.max(listener.ValueRW.Loudness, loudness);
-                    listener.ValueRW.LastHeardPosition = noiseEvent.Position;
-                    // math.max means if multiple noises hit this listener we keep the loudest
-                }
-            }
-        }
-
-        // Step 3 - Clean up noise events
-
-        // Destroy all noise events entities - they've served their purpose
+        // Step 4 - Destroy all noise event entities
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 
-        foreach(var (noiseEvent, entity) in 
+        foreach(var (noiseEvent, entity)in
             SystemAPI.Query<NoiseEventComponent>()
             .WithEntityAccess())
         {
             ecb.DestroyEntity(entity);
         }
 
-        // Playback executes all queued destroy commands
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
+    }
 
-        noiseEvents.Dispose();
+    // The job itself — runs once per entity that has NoiseListenerComponent
+    // partial is required for IJobEntity — the compiler generates boilerplate code for us
+    [BurstCompile]
+    public partial struct ProcessNoiseListenersJob: IJobEntity
+    {
+        // ReadOnly - all parallel threads can read this at the same time without conflict
+        [ReadOnly] public NativeArray<NoiseEventComponent> NoiseEvents;
+
+        // Execute is called once per matching entity
+        // Unity automatically passes the components we declare as parameters
+        // ref means read/write access — we need to write results back to the listener
+        public void Execute(ref NoiseListenerComponent listener)
+        {
+            // Reset from last frame first
+            listener.WasTriggered = false;
+            listener.Loudness = 0f;
+
+            for (int i = 0; i < NoiseEvents.Length; i++)
+            {
+                NoiseEventComponent noiseEvent = NoiseEvents[i];
+
+                float dist = math.distance(listener.Position, noiseEvent.Position);
+                float hearingRange = math.min(listener.Radius, noiseEvent.Radius);
+
+                if (dist > hearingRange) continue;
+
+                float t = 1f - math.saturate(dist / hearingRange);
+                float loudness = t * noiseEvent.Loudness;
+
+                if(loudness > listener.Loudness)
+                {
+                    listener.WasTriggered = true;
+                    listener.Loudness = loudness;
+                    listener.LastHeardPosition = noiseEvent.Position;
+                }
+            }
+        }
     }
 }

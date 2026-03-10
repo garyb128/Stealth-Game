@@ -176,6 +176,10 @@ public class NPCBrain : MonoBehaviour
     {
         if (currentState == newState) return;
 
+        // Reset detection when returning to a calm state
+        if (newState == defaultState)
+            npcPerception.Detection = 0f;
+
         var oldState = currentState;
         currentState = newState;
         OnStateChanged?.Invoke(this, oldState, newState);
@@ -214,19 +218,25 @@ public class NPCBrain : MonoBehaviour
                 arrivedAtInvestigatePoint = false;
                 investigateTimer = investigateDuration;
                 lookTimer = 0f;
-
-                // Heard takes us to the noise, sight upgrades it mid-investigation
                 investigatePoint = PickInvestigateDestination();
 
-                if (TryGetWalkablePoint(investigatePoint, out Vector3 reachable))
-                    investigatePoint = reachable;
+                // Only pathfind if we have a valid destination
+                if (investigatePoint != Vector3.negativeInfinity)
+                {
+                    if (TryGetWalkablePoint(investigatePoint, out Vector3 reachable))
+                        investigatePoint = reachable;
+                    else
+                    {
+                        investigatePoint = transform.position;
+                        arrivedAtInvestigatePoint = true;
+                    }
+                    agent.SetDestination(investigatePoint);
+                }
                 else
                 {
                     investigatePoint = transform.position;
                     arrivedAtInvestigatePoint = true;
                 }
-
-                agent.SetDestination(investigatePoint);
                 break;
 
             case EnemyState.Alert:
@@ -277,8 +287,10 @@ public class NPCBrain : MonoBehaviour
     // -------------------------------------------------------------------------
     private void UpdateInvestigate()
     {
-        // Sight upgrades the investigate destination mid-investigation
-        if (npcPerception.HasLineOfSight &&
+        // Only upgrade destination if we haven't arrived yet
+        // Once arrived, commit to looking around rather than chasing
+        if (!arrivedAtInvestigatePoint &&
+            npcPerception.CanSeeTarget &&
             npcPerception.LastSeenPosition != Vector3.negativeInfinity)
         {
             Vector3 upgraded = npcPerception.LastSeenPosition;
@@ -286,7 +298,6 @@ public class NPCBrain : MonoBehaviour
             {
                 investigatePoint = upgraded;
                 agent.SetDestination(investigatePoint);
-                arrivedAtInvestigatePoint = false;
             }
         }
 
@@ -318,8 +329,13 @@ public class NPCBrain : MonoBehaviour
 
         RotateTowards(targetYaw);
 
-        if (investigateTimer <= 0f && npcPerception.Detection <= investigateStopThreshold)
-            SwitchState(defaultState);
+        if (investigateTimer <= 0f)
+        {
+            if (npcPerception.Detection >= alertThreshold)
+                SwitchState(EnemyState.Alert);
+            else
+                SwitchState(defaultState);
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -453,6 +469,7 @@ public class NPCBrain : MonoBehaviour
         if (npcPerception.LastSeenPosition != Vector3.negativeInfinity)
             return npcPerception.LastSeenPosition;
 
+        // Nothing heard or seen — investigate current position
         return transform.position;
     }
 

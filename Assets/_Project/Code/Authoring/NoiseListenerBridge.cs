@@ -55,43 +55,33 @@ public class NoiseListenerBridge : MonoBehaviour
         Debug.Log("[NoiseListenerBridge] Entity created successfully.", this);
     }
 
+    private float hearCooldown;
+    private const float HearCooldownDuration = 0.5f;
+
     private void Update()
     {
         if (!isReady) return;
 
-        // Read the current component data from the entity
-        // Remember — GetComponentData returns a COPY not a reference
+        hearCooldown -= Time.deltaTime;
+
         var component = entityManager.GetComponentData<NoiseListenerComponent>(entity);
+        component.Position = new float3(transform.position.x, transform.position.y, transform.position.z);
 
-        // Push the NPC's current world position into the entity
-        // The system uses this to calculate distances to noise events
-        component.Position = new float3(
-            transform.position.x,
-            transform.position.y,
-            transform.position.z
-        );
-
-        // Check if the system detected a noise this frame
-        if (component.WasTriggered)
+        if (component.WasTriggered && hearCooldown <= 0f)
         {
-            // Convert float3 back to Vector3 for the MonoBehaviour side
             Vector3 noisePos = new Vector3(
                 component.LastHeardPosition.x,
                 component.LastHeardPosition.y,
                 component.LastHeardPosition.z
             );
 
-            // Pass the result to NPCPerception exactly like the old system did
             perception.HearNoise(noisePos, component.Loudness);
+            hearCooldown = HearCooldownDuration;
 
-            Debug.Log($"[NoiseListenerBridge] Noise triggered! Loudness: {component.Loudness}");
-
-            // Reset flags so we don't fire HearNoise multiple times for the same event
             component.WasTriggered = false;
             component.Loudness = 0f;
         }
 
-        // Write our changes back — mandatory since GetComponentData returns a copy
         entityManager.SetComponentData(entity, component);
     }
 
