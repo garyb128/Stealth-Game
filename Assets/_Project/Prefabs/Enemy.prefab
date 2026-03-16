@@ -245,6 +245,8 @@ GameObject:
   - component: {fileID: 7911456008608855935}
   - component: {fileID: 1933899438936945497}
   - component: {fileID: 9019901728786646042}
+  - component: {fileID: 1416638828577256673}
+  - component: {fileID: 1955455423242205379}
   m_Layer: 6
   m_Name: Enemy
   m_TagString: Untagged
@@ -368,7 +370,7 @@ MonoBehaviour:
   target: {fileID: 0}
   obstructionMask:
     serializedVersion: 2
-    m_Bits: 247
+    m_Bits: 0
   hearingFallOff: 1
   hearingDetectionCap: 0.5
   debugLogStateChanges: 1
@@ -424,3 +426,30 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1416638828577256673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6286308802894130117}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11e95608bb09fc84fa7a24727fc79af9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VisionAuthoring
+  obstructionMask:
+    serializedVersion: 2
+    m_Bits: 119
+--- !u!114 &1955455423242205379
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6286308802894130117}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8e5ac2ebac0ebc47867c6c80fcce5d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VisionBridge

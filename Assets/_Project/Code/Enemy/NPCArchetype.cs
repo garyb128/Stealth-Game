@@ -21,6 +21,7 @@ public class NPCArchetype : ScriptableObject
     public float fovDegrees = 90f;
     public float fovStickyTime = 0.15f;
     public float hearingFallOff = 1f;
+    public float hearingDetectionCap = 0.5f; // new
 
     [Header("Perception – Detection")]
     [HideInInspector]  public float detectionRateClose = 3.0f;   // fill rate at point blank
@@ -80,12 +81,14 @@ public class NPCArchetype : ScriptableObject
                 fovDegrees,
                 fovStickyTime,
                 hearingFallOff,
+                hearingDetectionCap,
                 detectionRateClose,
                 detectionRateFar,
-                decayRateLow,
-                decayRateHigh,
                 detectionCapClose,
-                detectionCapFar);
+                detectionCapFar,
+                decayRateLow,
+                decayRateHigh
+            );
         }
 
         if (brain != null)
