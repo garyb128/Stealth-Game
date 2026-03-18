@@ -46,16 +46,19 @@ public class NPCPerception : MonoBehaviour
     // Raycast result — written by VisionRaycastBridge, read in Update
     // Replaces the direct Physics.Raycast call
     // -------------------------------------------------------------------------
-    private bool raycastHitSomething = false;
-    private bool hasRaycastResult = false; // false until the first result arrives
+    bool raycastHitSomething = false;
+    bool hasRaycastResult = false; // false until the first result arrives
 
     // Cached per-frame vision query data — written in Update, read by the bridge
-    private Vector3 cachedOrigin;
-    private Vector3 cachedDirection;
-    private float cachedDistance;
-    private bool cachedQueryValid;
+    Vector3 cachedOrigin;
+    Vector3 cachedDirection;
+    float cachedDistance;
+    bool cachedQueryValid;
+    Vector3 cachedNPCForward;
+    Vector3 cachedTargetPosition;
+    Vector3 cachedNPCPosition;
 
-    private bool lastCanPotentiallySee;
+    bool lastCanPotentiallySee;
 
     // -------------------------------------------------------------------------
     // Unity lifecycle
@@ -144,11 +147,14 @@ public class NPCPerception : MonoBehaviour
         // The bridge passes this to VisionRaycastSystem which fires the ray
         // and writes the result back via SetRaycastResult next frame
         // -------------------------------------------------------------------------
-        if (CanPotentiallySee)
+        if (CanPotentiallySee || InRange) // cache even if not potentially visible so FOV job can calculate
         {
             cachedOrigin = origin.position;
             cachedDirection = dirToTarget;
             cachedDistance = distToTarget;
+            cachedNPCPosition = transform.position;
+            cachedNPCForward = origin.right;
+            cachedTargetPosition = target.position;
             cachedQueryValid = true;
         }
         else
@@ -201,12 +207,32 @@ public class NPCPerception : MonoBehaviour
     /// Returns the current vision query parameters for the bridge to pass to ECS.
     /// Returns false if there is no valid query this frame.
     /// </summary>
-    public bool HasVisionQuery(out Vector3 origin, out Vector3 direction, out float distance)
+    public bool HasVisionQuery(
+        out Vector3 origin,
+        out Vector3 direction,
+        out float distance,
+        out Vector3 npcPosition,
+        out Vector3 npcForward,
+        out Vector3 targetPosition,
+        out float viewDistance,
+        out float fovDegrees)
     {
         origin = cachedOrigin;
         direction = cachedDirection;
         distance = cachedDistance;
+        npcPosition = cachedNPCPosition;
+        npcForward = cachedNPCForward;
+        targetPosition = cachedTargetPosition;
+        viewDistance = this.viewDistance;
+        fovDegrees = this.fovDegrees;
         return cachedQueryValid;
+    }
+
+    public void SetFOVResult(bool inRange, bool inFOV)
+    {
+        InRange = inRange;
+        InFOV = inFOV;
+        CanPotentiallySee = inRange && inFOV;
     }
 
     /// <summary>

@@ -45,9 +45,9 @@ public class VisionBridge: MonoBehaviour
 
         entityManager.AddComponentData(entity, new VisionComponent
         {
-            Origin = float3.zero,
-            Direction = math.forward(),
-            Distance = 0f,
+            RayOrigin = float3.zero,
+            RayDirection = math.forward(),
+            RayDistance = 0f,
             ObstructionMask = obstructionMask,
             HitSomething = false,
             IsValid = false,
@@ -57,19 +57,35 @@ public class VisionBridge: MonoBehaviour
         Debug.Log("[VisionRaycastBridge] Entity Created successfully", this);
     }
 
- private void Update()
+    void Update()
     {
         if (!isReady) return;
 
         var component = entityManager.GetComponentData<VisionComponent>(entity);
 
-        // Ask NPCPerception for the current vision query data
-        // If it has a valid target and eyes, write the query — otherwise mark invalid
-        if (perception.HasVisionQuery(out Vector3 origin, out Vector3 direction, out float distance))
+        // Write FOV and raycast query data from NPCPerception
+        if (perception.HasVisionQuery(
+            out Vector3 origin,
+            out Vector3 direction,
+            out float distance,
+            out Vector3 npcPosition,
+            out Vector3 npcForward,
+            out Vector3 targetPosition,
+            out float viewDistance,
+            out float fovDegrees))
         {
-            component.Origin = new float3(origin.x, origin.y, origin.z);
-            component.Direction = new float3(direction.x, direction.y, direction.z);
-            component.Distance = distance;
+            // FOV inputs
+            component.NPCPosition = new float3(npcPosition.x, npcPosition.y, npcPosition.z);
+            component.NPCForward = new float3(npcForward.x, npcForward.y, npcForward.z);
+            component.TargetPosition = new float3(targetPosition.x, targetPosition.y, targetPosition.z);
+            component.ViewDistance = viewDistance;
+            component.FOVDegrees = fovDegrees;
+            component.VerticalLimit = 3.0f;
+
+            // Raycast inputs
+            component.RayOrigin = new float3(origin.x, origin.y, origin.z);
+            component.RayDirection = new float3(direction.x, direction.y, direction.z);
+            component.RayDistance = distance;
             component.IsValid = true;
         }
         else
@@ -77,14 +93,16 @@ public class VisionBridge: MonoBehaviour
             component.IsValid = false;
         }
 
-        // Read result back from last frame's raycast
-        // HitSomething is written by VisionRaycastSystem
+        // Read FOV results back from last frame's job
+        perception.SetFOVResult(component.InRange, component.InFOV);
+
+        // Read raycast result back from last frame
         perception.SetRaycastResult(component.HitSomething);
 
         entityManager.SetComponentData(entity, component);
     }
 
-    private void OnDestroy()
+    void OnDestroy()
     {
         var world = World.DefaultGameObjectInjectionWorld;
         if (world == null || !world.IsCreated) return;
