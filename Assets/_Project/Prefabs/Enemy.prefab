@@ -312,7 +312,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c48fc27bf5a9a9a41ae0129f49bd6717, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NoiseListenerAuthoring
-  hearingRadius: 10
+  hearingRadius: 15
 --- !u!114 &4172123505776222693
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -340,6 +340,12 @@ MonoBehaviour:
   npcArchetype: {fileID: 11400000, guid: 335ad69f045b66143bed0c072d366fa6, type: 2}
   target: {fileID: 0}
   currentState: 0
+  attackCooldown: 1
+  attackRange: 30
+  attackDamage: 20
+  attackMask:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!114 &3224729753544045901
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -368,12 +374,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NPCPerception
   eyes: {fileID: 2298213364533100349}
   target: {fileID: 0}
-  obstructionMask:
-    serializedVersion: 2
-    m_Bits: 0
-  hearingFallOff: 1
-  hearingDetectionCap: 0.5
-  debugLogStateChanges: 1
   drawGizmos: 1
   coneSegments: 16
 --- !u!136 &1933899438936945497

@@ -75,8 +75,8 @@ public class GameManager : MonoBehaviour
 
         alertTimer = Mathf.Clamp(alertTimer, 0f, alertLoseTime);
 
-        if (alertTimer >= alertLoseTime)
-            Lose();
+     //   if (alertTimer >= alertLoseTime)
+      //      Lose();
 
     }
 
@@ -101,17 +101,16 @@ public class GameManager : MonoBehaviour
             alertTimer -= Time.deltaTime;
 
         alertTimer = Mathf.Clamp(alertTimer, 0, alertLoseTime);
-
+/*
         if (alertTimer >= alertLoseTime)
         {
             Lose();
-        }
+        }*/
     }
 
-    private void Lose()
+    public void Lose()
     {
         gameOver = true;
-        Debug.Log("You Lose!");
 
         //Restart the level after 2 seconds
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);

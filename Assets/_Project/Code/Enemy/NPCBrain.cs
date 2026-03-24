@@ -1,4 +1,5 @@
 using System;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -37,6 +38,16 @@ public class NPCBrain : MonoBehaviour
     // The state this NPC returns to after completing an alert cycle
     // Set via ScriptableObject — could be Patrol or Idle depending on NPC type
     private EnemyState defaultState = EnemyState.Patrol;
+
+    // Attacking variables
+    [Header("RangedAttack")]
+    [SerializeField] float attackCooldown = 1f;
+    [SerializeField] float attackRange = 30f;
+    [SerializeField] int attackDamage = 20;
+    [SerializeField] LayerMask attackMask; // Player + obstacles
+
+    float attackTimer = 0f;
+    PlayerHealth playerHealth;
 
     // -------------------------------------------------------------------------
     // Events
@@ -122,6 +133,8 @@ public class NPCBrain : MonoBehaviour
         if (npcArchetype != null)
             ApplyArchetype();
 
+        // Get player health for when attacking
+        playerHealth = target.GetComponentInChildren<PlayerHealth>();
 
         // Cache starting position and rotation
         startingPosition = transform.position;
@@ -345,15 +358,17 @@ public class NPCBrain : MonoBehaviour
     {
         if (target == null) return;
 
+        attackTimer -= Time.deltaTime;
+
+        // Always try to shoot if we have line of sight
         if (npcPerception.HasLineOfSight)
         {
-            // Can see player — chase directly and reset grace timer
+            TryShoot(); 
+
             agent.SetDestination(target.position);
             alertTimer = loseSightGraceTime;
             return;
         }
-
-        Debug.Log($"NPCHASLINEOFSIGHT{npcPerception.HasLineOfSight} + alerttimer {alertTimer}");
 
         // Lost line of sight — move toward last known position
         alertTimer -= Time.deltaTime;
@@ -519,6 +534,32 @@ public class NPCBrain : MonoBehaviour
         }
 
         return found;
+    }
+
+    // Try to shoot the enemy
+    void TryShoot()
+    {
+        if (attackTimer > 0f)
+            return;
+
+        attackTimer = attackCooldown;
+
+        Vector3 origin = transform.position + Vector3.up * 0.5f;
+        Vector3 direction = transform.forward;
+
+
+        if (Physics.Raycast(origin, direction, out RaycastHit hit, attackRange, attackMask))
+        {
+            Debug.Log($"{hit.collider.gameObject}");
+
+            if (hit.collider.CompareTag("Player"))
+            {
+                playerHealth.TakeDamage(attackDamage);
+            }
+        }
+
+        // Debug line so you can see the shot
+        Debug.DrawRay(origin, direction * attackRange, Color.red, 0.2f);
     }
 
     private void PickNewSearchPoint()

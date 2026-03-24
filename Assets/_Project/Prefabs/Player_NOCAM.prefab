@@ -291,7 +291,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5789847320581798093}
-  - component: {fileID: 4699636833063254203}
   - component: {fileID: 6164505211326980792}
   - component: {fileID: 3115645714030353656}
   - component: {fileID: 8198118340883973950}
@@ -322,14 +321,6 @@ Transform:
   - {fileID: 7732656195786600558}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &4699636833063254203
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8795116478035903540}
-  m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &6164505211326980792
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -481,7 +472,6 @@ MonoBehaviour:
   walkRadius: 4
   sprintRadius: 8
   crouchRadius: 2
-  landingRadius: 10
 --- !u!1001 &2433838307457769884
 PrefabInstance:
   m_ObjectHideFlags: 0

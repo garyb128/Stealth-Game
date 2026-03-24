@@ -89,7 +89,7 @@ public partial struct NoiseListenerSystem : ISystem
                 NoiseEventComponent noiseEvent = NoiseEvents[i];
 
                 float dist = math.distance(listener.Position, noiseEvent.Position);
-                float hearingRange = math.min(listener.Radius, noiseEvent.Radius);
+                float hearingRange = listener.Radius;
 
                 if (dist > hearingRange) continue;
 

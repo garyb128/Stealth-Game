@@ -48,6 +48,7 @@ public class PlayerController : MonoBehaviour
         if(playerInputHandler == null)  playerInputHandler = GetComponent<PlayerInputHandler>();
         if(playerNoise == null) playerNoise = GetComponent<PlayerNoise>();
         standingHeight = characterController.height;
+
     }
 
     void Update()
@@ -179,9 +180,15 @@ public class PlayerController : MonoBehaviour
 
             // In Update:
             if (isGrounded && !wasGrounded)
-                playerNoise.EmitLanding(1f);
+                playerNoise.EmitNoise(1f, 5f);
 
             wasGrounded = isGrounded;
+
+            // Player can whistle to attract enemies
+            if (playerInputHandler.WhistlePressedThisFrame)
+            {
+                playerNoise.EmitNoise(1f, 10f);
+            }
         }
        
     }

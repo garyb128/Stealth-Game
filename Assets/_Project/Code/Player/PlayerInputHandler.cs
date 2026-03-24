@@ -9,6 +9,7 @@ public class PlayerInputHandler : MonoBehaviour
     public Vector2 LookInput {  get; private set; }
     public bool JumpPressed {  get; private set; }
     public bool CrouchPressed {  get; private set; }
+    public bool WhistlePressed { get; private set; }
 
     void Awake()
     {
@@ -61,7 +62,10 @@ public class PlayerInputHandler : MonoBehaviour
     // Check if jump was pressed this frame
     public bool JumpPressedThisFrame => input.Player.Jump.WasPressedThisFrame();
 
-    //Check if crouch was toggled
+    // Check if crouch was toggled
     public bool CrouchToggledThisFrame => input.Player.Crouch.WasPressedThisFrame();
+
+    // Check if whistle was pressed this frame
+    public bool WhistlePressedThisFrame => input.Player.Whistle.WasPressedThisFrame();
 
 }
