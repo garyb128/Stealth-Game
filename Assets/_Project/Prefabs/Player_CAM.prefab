@@ -844,6 +844,10 @@ PrefabInstance:
       value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 3644452618431080949, guid: 1a119c710ef7bda4e8aca1568475ada8, type: 3}
+      propertyPath: groundMask.m_Bits
+      value: 256
+      objectReference: {fileID: 0}
+    - target: {fileID: 3644452618431080949, guid: 1a119c710ef7bda4e8aca1568475ada8, type: 3}
       propertyPath: turnSpeedCrouched
       value: 3
       objectReference: {fileID: 0}
