@@ -509,6 +509,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6220748347413751046, guid: effce21bc1cc0884bb5bb0a01e02d778, type: 3}
+      propertyPath: hearingRadius
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 6286308802894130117, guid: effce21bc1cc0884bb5bb0a01e02d778, type: 3}
       propertyPath: m_Name
       value: Enemy

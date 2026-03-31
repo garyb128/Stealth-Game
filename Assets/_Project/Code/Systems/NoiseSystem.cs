@@ -10,6 +10,9 @@ public class NoiseSystem : MonoBehaviour
     EntityManager entityManager;
     World world;
 
+    [Header("Noise Settings")]
+    public float MaxNoiseRadius = 20f; // Radius at 1 loudness
+
     // These store the last emitted noise for debugging only
     Vector3 debugLastPos;
     float debugLastRadius;
@@ -39,12 +42,14 @@ public class NoiseSystem : MonoBehaviour
         CurrentNoiseLoudness = Mathf.MoveTowards(CurrentNoiseLoudness, 0f, Time.deltaTime);
     }
 
-    public void Emit(Vector3 pos, float radius, float loudness01)
+    public void Emit(Vector3 pos, float loudness01)
     {
         // Set loudness when noise fires - UI reads this
         CurrentNoiseLoudness = loudness01;
 
         if (world == null || !world.IsCreated) return;
+
+        float radius = loudness01 * MaxNoiseRadius;
 
         // Debug info
         debugLastPos = pos;

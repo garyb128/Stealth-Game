@@ -2,23 +2,19 @@ using UnityEngine;
 
 public class PlayerNoise : MonoBehaviour
 {
-    [Header("Footsteps")]
-    [SerializeField] float walkRadius = 4f;
-    [SerializeField] float sprintRadius = 8f;
-    [SerializeField] float crouchRadius = 2f;
-
     public void EmitFootstep(bool sprinting, bool crouching)
     {
-        float radius = sprinting ? sprintRadius : (crouching ? crouchRadius : walkRadius);
-        float loudness = sprinting ? 1f : (crouching ? 0.25f : 0.5f);
+        // For now use 1 as the base. Change into a more sophisticated loudness calculation
+        // (Checking movement speed, if jumping or falling, material type of ground being walked on)
+        float loudness = sprinting ? 1f : (crouching ? 0.25f : 0.5f); 
 
-        NoiseSystem.Instance.Emit(transform.position, radius, loudness);
+        NoiseSystem.Instance.Emit(transform.position, loudness);
     }
 
-    // Emits a noise with intensity and how far the sound can be heard from
-    public void EmitNoise(float intensity01, float hearingRadius)
+    // Emits a noise with intensity
+    public void EmitNoise(float intensity01)
     {
-        NoiseSystem.Instance.Emit(transform.position, hearingRadius, Mathf.Clamp01(intensity01));
+        NoiseSystem.Instance.Emit(transform.position, Mathf.Clamp01(intensity01));
     }
 
 }

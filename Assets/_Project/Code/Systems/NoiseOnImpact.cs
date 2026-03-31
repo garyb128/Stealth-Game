@@ -14,6 +14,6 @@ public class NoiseOnImpact : MonoBehaviour
         if (speed < minImpactSpeed) return;
 
         Vector3 pos = collision.contacts.Length > 0 ? collision.contacts[0].point : transform.position;
-        NoiseSystem.Instance.Emit(pos, impactRadius, impactStrength);
+        NoiseSystem.Instance.Emit(pos, impactStrength);
     }
 }

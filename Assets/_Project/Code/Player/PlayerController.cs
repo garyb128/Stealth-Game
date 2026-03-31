@@ -271,7 +271,7 @@ public class PlayerController : MonoBehaviour
 
             //If not crouching then player a sound
             if(!isCrouching)
-               noise.EmitNoise(1f, 5f);
+               noise.EmitNoise(5f);
         }
             
 
@@ -281,6 +281,6 @@ public class PlayerController : MonoBehaviour
     void HandleWhistle()
     {
         if (input.WhistlePressedThisFrame)
-            noise.EmitNoise(1f, 10f);
+            noise.EmitNoise(10f);
     }
 }

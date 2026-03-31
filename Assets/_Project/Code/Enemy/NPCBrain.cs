@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using Unity.VisualScripting;
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -12,7 +14,11 @@ public class NPCBrain : MonoBehaviour
         Patrol,
         Investigate,
         Alert,
-        Search
+        Search,
+        Unconscious,
+        Asleep,
+        Recovery,
+        Dead
     }
 
     // -------------------------------------------------------------------------
@@ -118,6 +124,10 @@ public class NPCBrain : MonoBehaviour
     private float scanTimer;
     private float searchLookTimer;
 
+    // States for being unconscious/dead/asleep
+    [HideInInspector] public bool isKnockedOut;
+
+
     // -------------------------------------------------------------------------
     // Unity lifecycle
     // -------------------------------------------------------------------------
@@ -202,6 +212,10 @@ public class NPCBrain : MonoBehaviour
 
     private void OnEnterState(EnemyState state)
     {
+        //Have these set true as default, some states overwrite these
+        agent.enabled = true;
+        npcPerception.enabled = true;
+
         switch (state)
         {
             case EnemyState.Idle:
@@ -278,6 +292,17 @@ public class NPCBrain : MonoBehaviour
                     : transform.position;
 
                 PickNewSearchPoint();
+                break;
+            case EnemyState.Unconscious:
+                //Stop movement and disable perception/patrol while unconscious
+                SetPatrolEnabled(false);
+                if (agent != null)
+                {
+                    agent.isStopped = true;
+                    agent.enabled = false;
+                }
+                if (npcPerception != null)
+                    npcPerception.enabled = false;
                 break;
         }
     }
@@ -466,6 +491,56 @@ public class NPCBrain : MonoBehaviour
         SwitchState(EnemyState.Alert);
     }
 
+    // Try to shoot the enemy
+    void TryShoot()
+    {
+        if (attackTimer > 0f)
+            return;
+
+        attackTimer = attackCooldown;
+
+        Vector3 origin = transform.position + Vector3.up * 0.5f;
+        Vector3 direction = transform.forward;
+
+
+        if (Physics.Raycast(origin, direction, out RaycastHit hit, attackRange, attackMask))
+        {
+            Debug.Log($"{hit.collider.gameObject}");
+
+            if (hit.collider.CompareTag("Player"))
+            {
+                playerHealth.TakeDamage(attackDamage);
+            }
+        }
+
+        // Debug line so you can see the shot
+        Debug.DrawRay(origin, direction * attackRange, Color.red, 0.2f);
+    }
+
+    // Knockout the enemy
+    public void Knockout(float duration)
+    {
+        // If already knocked out, return
+        if (isKnockedOut) return;
+
+        isKnockedOut = true;
+        // Switch to the new state so the other systems can react
+        SwitchState(EnemyState.Unconscious);
+
+        StartCoroutine(RecoverFromKnockout(duration));
+    }
+
+    IEnumerator RecoverFromKnockout(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+
+        if (!isKnockedOut) yield break;
+
+        isKnockedOut = false;
+
+        SwitchState(defaultState);
+    }
+
     // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------
@@ -534,32 +609,6 @@ public class NPCBrain : MonoBehaviour
         }
 
         return found;
-    }
-
-    // Try to shoot the enemy
-    void TryShoot()
-    {
-        if (attackTimer > 0f)
-            return;
-
-        attackTimer = attackCooldown;
-
-        Vector3 origin = transform.position + Vector3.up * 0.5f;
-        Vector3 direction = transform.forward;
-
-
-        if (Physics.Raycast(origin, direction, out RaycastHit hit, attackRange, attackMask))
-        {
-            Debug.Log($"{hit.collider.gameObject}");
-
-            if (hit.collider.CompareTag("Player"))
-            {
-                playerHealth.TakeDamage(attackDamage);
-            }
-        }
-
-        // Debug line so you can see the shot
-        Debug.DrawRay(origin, direction * attackRange, Color.red, 0.2f);
     }
 
     private void PickNewSearchPoint()
