@@ -273,8 +273,7 @@ public class PlayerController : MonoBehaviour
             if(!isCrouching)
                noise.EmitNoise(5f);
         }
-            
-
+       
         wasGrounded = isGrounded;
     }
 

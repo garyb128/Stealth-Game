@@ -3,45 +3,36 @@ using UnityEngine.Events;
 
 public class Weapon : MonoBehaviour
 {
-    [Tooltip("Reference WeaponData asset")]
     public WeaponData data;
-
-    [Tooltip("If true, create an instance copy of the WeaponData at runtime (useful for runtime edits)")]
     public bool cloneDataAtRuntime = false;
-
-    // internal reference that points to either the asset or the cloned instance
     protected WeaponData runtimeData;
 
-    [Tooltip("Layer mask for enemy detection")]
-    public LayerMask targetLayer;
+    public LayerMask targetLayer;        // Used by melee; ranged uses data.hitMask
 
     public UnityEvent OnUse;
     public UnityEvent OnHit;
 
     protected float cooldownTimer;
 
-   void Awake()
+    protected virtual void Awake()
     {
         cooldownTimer = 0f;
     }
 
-    void Start()
+    protected virtual void Start()
     {
         if (data == null)
         {
             Debug.LogWarning($"Weapon on {gameObject.name} has no WeaponData assigned.");
             return;
         }
-
         runtimeData = cloneDataAtRuntime ? Instantiate(data) : data;
     }
 
-    void Update()
+    protected virtual void Update()
     {
-        if(cooldownTimer  > 0f)
-        {
+        if (cooldownTimer > 0f)
             cooldownTimer -= Time.deltaTime;
-        }
     }
 
     public virtual bool CanUse()
@@ -49,10 +40,9 @@ public class Weapon : MonoBehaviour
         return cooldownTimer <= 0f;
     }
 
-    public void Use()
+    public virtual void Use()
     {
         if (!CanUse()) return;
-
         OnUse?.Invoke();
         cooldownTimer = runtimeData != null ? runtimeData.coolDown : 1f;
     }

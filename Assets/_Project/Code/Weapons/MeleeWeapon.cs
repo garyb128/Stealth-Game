@@ -1,4 +1,3 @@
-// name=Assets/_Project/Code/Player/Weapons/MeleeWeapon.cs
 using UnityEngine;
 
 public class MeleeWeapon : Weapon
@@ -7,16 +6,18 @@ public class MeleeWeapon : Weapon
     public float rangeOverride = -1f;
     public float radiusOverride = -1f;
     public LayerMask overrideTargetLayer;
-
     public Vector3 originOffset = new Vector3(0, 0.9f, 0);
+
+    public override void Use()
+    {
+        if (!CanUse()) return;
+        base.Use();
+        UseInternal();
+    }
 
     void UseInternal()
     {
-        if (runtimeData == null)
-        {
-            Debug.LogWarning("No WeaponData available for MeleeWeapon.");
-            return;
-        }
+        if (runtimeData == null) return;
 
         float range = (rangeOverride > 0f) ? rangeOverride : runtimeData.meleeRange;
         float radius = (radiusOverride > 0f) ? radiusOverride : runtimeData.meleeRadius;
@@ -37,29 +38,22 @@ public class MeleeWeapon : Weapon
         }
         if (chosen == null) return;
 
+        OnHit?.Invoke();
+
         var npc = chosen.GetComponentInParent<NPCBrain>();
         if (npc != null)
         {
             Vector3 toPlayer = (transform.position - npc.transform.position).normalized;
             float dot = Vector3.Dot(npc.transform.forward, toPlayer);
-
             bool isBackstab = dot < runtimeData.backstabDotThreshold;
 
             if (isBackstab)
-            {
-                if (runtimeData.meleeKnockOutDuration > 0f)
-                    npc.Knockout(runtimeData.meleeKnockOutDuration);
-            }
+                npc.Knockout(runtimeData.meleeKnockOutDuration);
             else
-            {
                 npc.Knockout(Mathf.Min(2f, runtimeData.meleeKnockOutDuration));
-                EmitNoise(transform.position);
-            }
         }
-        else
-        {
-            EmitNoise(transform.position);
-        }
+
+        EmitNoise(transform.position);
     }
 
     void OnDrawGizmosSelected()
@@ -69,7 +63,6 @@ public class MeleeWeapon : Weapon
         float radius = (radiusOverride > 0f) ? radiusOverride : data.meleeRadius;
         Vector3 origin = transform.position + originOffset;
         Vector3 c = origin + transform.forward * Mathf.Clamp(range * 0.5f, 0f, range);
-
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(c, radius);
     }
