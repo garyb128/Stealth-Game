@@ -1,26 +1,18 @@
 # Stealth Game
 
-A small work-in-progress stealth game prototype (inspired by Thief and Splinter Cell). Focus: AI perception (sight/hearing), light/dark mechanics, and stylized shaders.
+A small work-in-progress stealth prototype inspired by Thief and Splinter Cell.
 
-Status: Prototype — actively developed.
-
-Highlights
-- Player movement and sneaking
-- Enemy AI with vision cones and alert states
-- Light & sound detection systems
+Status: WIP — prototype.
 
 Quick start
-1. git clone https://github.com/garyb128/Stealth-Game.git
-2. Open the project in Unity (recommended: 2021.3 LTS+)
-3. Open the main scene (Assets/Scenes/StarterScene) and press Play
+1. Clone: git clone https://github.com/garyb128/Stealth-Game.git
+2. Open in Unity: Unity 6000.3.9f1
+3. Open the main scene in Assets/Scenes and press Play
 
 Controls (prototype)
 - Move: WASD
 - Look: Mouse
 - Crouch: Left Ctrl
 
-Contributing
-- Open issues for major changes, create branch `feat/...`, and submit PRs.
-
-License
-- No license yet. I can add MIT if you want.
+Notes
+- Project is a prototype; systems and assets are in active development.
