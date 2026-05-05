@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour
 
     // References
     CharacterController controller;
-    PlayerInputHandler input;
+    [HideInInspector] public PlayerInputHandler input;
     PlayerNoise noise;
     GroundCheck groundCheck;
 

@@ -10,6 +10,7 @@ public class PlayerInputHandler : MonoBehaviour
     public bool JumpPressed {  get; private set; }
     public bool CrouchPressed {  get; private set; }
     public bool WhistlePressed { get; private set; }
+    public bool FirePressed { get; private set; }
 
     void Awake()
     {
@@ -67,5 +68,6 @@ public class PlayerInputHandler : MonoBehaviour
 
     // Check if whistle was pressed this frame
     public bool WhistlePressedThisFrame => input.Player.Whistle.WasPressedThisFrame();
-
+    
+    public bool FirePressedThisFrame => input.Player.Fire.WasPressedThisFrame();
 }
