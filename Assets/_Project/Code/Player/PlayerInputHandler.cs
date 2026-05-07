@@ -68,6 +68,8 @@ public class PlayerInputHandler : MonoBehaviour
 
     // Check if whistle was pressed this frame
     public bool WhistlePressedThisFrame => input.Player.Whistle.WasPressedThisFrame();
-    
+
+    public bool FireHeld => input.Player.Fire.IsPressed();
+
     public bool FirePressedThisFrame => input.Player.Fire.WasPressedThisFrame();
 }

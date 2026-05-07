@@ -15,4 +15,10 @@ MonoBehaviour:
   weaponID: 0
   weaponName: Pistol
   damage: 10
+  roundsPerMinute: 600
+  automatic: 0
   maxAmmo: 10
+  muzzleVelocity: 1000
+  gravity: 9.81
+  maxSimulationTime: 2
+  spreadAngle: 1

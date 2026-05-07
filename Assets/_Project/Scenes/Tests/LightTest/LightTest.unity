@@ -397,6 +397,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4872339341515292821, guid: 8fe8c432d7207b848b63c367904ab9a2, type: 3}
   m_PrefabInstance: {fileID: 834394728}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &834394732 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7429050217761418547, guid: 8fe8c432d7207b848b63c367904ab9a2, type: 3}
+  m_PrefabInstance: {fileID: 834394728}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66cc5bb6789a84044a91a30a61563e42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Weapon
 --- !u!1001 &914947740
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -790,7 +801,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9617ae5ed5b732644a6802cc1ba2d901, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WeaponController
-  currentWeapon: {fileID: 7429050217761418547, guid: 8fe8c432d7207b848b63c367904ab9a2, type: 3}
+  currentWeapon: {fileID: 834394732}
 --- !u!1 &1768606041
 GameObject:
   m_ObjectHideFlags: 0

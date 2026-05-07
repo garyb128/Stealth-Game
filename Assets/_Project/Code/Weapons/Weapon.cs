@@ -7,15 +7,25 @@ public class Weapon : MonoBehaviour
     int currentAmmo;
     IWeaponAction action;
 
+    float nextFireTime;
+
     void Awake()
     {
         action = GetComponent<IWeaponAction>();
+
         currentAmmo = data.maxAmmo;
     }
 
     public void Use()
     {
-        if (UsesAmmo() && currentAmmo <= 0)
+        // Fire rate check
+        if (Time.time < nextFireTime)
+        {
+            return;
+        }
+
+        // Ammo check
+        if (currentAmmo <= 0)
         {
             Debug.Log("No ammo!");
             return;
@@ -23,14 +33,11 @@ public class Weapon : MonoBehaviour
 
         action?.Execute(data);
 
-        if (UsesAmmo())
-        {
-            currentAmmo--;
-        }
-    }
+        currentAmmo--;
 
-    bool UsesAmmo()
-    {
-        return data.maxAmmo > 0;
+        // Convert RPM to delay
+        float fireDelay = 60f / data.roundsPerMinute;
+
+        nextFireTime = Time.time + fireDelay;
     }
 }

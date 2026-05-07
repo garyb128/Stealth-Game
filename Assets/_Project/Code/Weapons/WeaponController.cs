@@ -3,18 +3,26 @@ using UnityEngine;
 public class WeaponController : MonoBehaviour
 {
     public Weapon currentWeapon;
-    PlayerController controller;
-
-    private void Awake()
-    {
-        controller = GetComponent<PlayerController>();
-    }
+    public PlayerInputHandler input;
 
     void Update()
     {
-        if (controller.input.FirePressedThisFrame)
+        if (currentWeapon == null)
+            return;
+
+        if (currentWeapon.data.automatic)
         {
-            currentWeapon?.Use();
+            if (input.FireHeld)
+            {
+                currentWeapon.Use();
+            }
+        }
+        else
+        {
+            if (input.FirePressedThisFrame)
+            {
+                currentWeapon.Use();
+            }
         }
     }
 }
