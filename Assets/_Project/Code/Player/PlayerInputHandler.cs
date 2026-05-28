@@ -5,71 +5,59 @@ public class PlayerInputHandler : MonoBehaviour
 {
     public PlayerInputActions input;
 
-    public Vector2 MoveInput {  get; private set; }
-    public Vector2 LookInput {  get; private set; }
-    public bool JumpPressed {  get; private set; }
-    public bool CrouchPressed {  get; private set; }
-    public bool WhistlePressed { get; private set; }
-    public bool FirePressed { get; private set; }
+    public Vector2 MoveInput { get; private set; }
+    public Vector2 LookInput { get; private set; }
 
     void Awake()
     {
-        if (input == null)
-        {
-            input = new PlayerInputActions();
-        }
+        input ??= new PlayerInputActions();
     }
-
 
     void OnEnable()
     {
         input.Player.Enable();
 
         input.Player.Move.performed += OnMove;
-        input.Player.Move.canceled += OnMoveCancelled;
+        input.Player.Move.canceled += OnMove;
+
         input.Player.Look.performed += OnLook;
-        input.Player.Look.canceled += OnLookCancelled;
+        input.Player.Look.canceled += OnLook;
     }
 
-    private void OnDisable()
+    void OnDisable()
     {
         input.Player.Move.performed -= OnMove;
-        input.Player.Move.canceled -= OnMoveCancelled;
+        input.Player.Move.canceled -= OnMove;
+
         input.Player.Look.performed -= OnLook;
-        input.Player.Look.canceled -= OnLookCancelled;
+        input.Player.Look.canceled -= OnLook;
+
         input.Player.Disable();
     }
 
-    void OnMove(InputAction.CallbackContext ctx)
+    private void OnMove(InputAction.CallbackContext ctx)
     {
         MoveInput = ctx.ReadValue<Vector2>();
     }
 
-    void OnMoveCancelled(InputAction.CallbackContext ctx)
-    {
-        MoveInput = Vector2.zero;
-    }
-
-    void OnLook(InputAction.CallbackContext ctx)
+    private void OnLook(InputAction.CallbackContext ctx)
     {
         LookInput = ctx.ReadValue<Vector2>();
     }
 
-    void OnLookCancelled(InputAction.CallbackContext ctx)
-    {
-        LookInput = Vector2.zero;
-    }
+    // Buttons (polling is correct here)
+    public bool JumpPressedThisFrame =>
+        input.Player.Jump.WasPressedThisFrame();
 
-    // Check if jump was pressed this frame
-    public bool JumpPressedThisFrame => input.Player.Jump.WasPressedThisFrame();
+    public bool CrouchPressedThisFrame =>
+        input.Player.Crouch.WasPressedThisFrame();
 
-    // Check if crouch was toggled
-    public bool CrouchToggledThisFrame => input.Player.Crouch.WasPressedThisFrame();
+    public bool WhistlePressedThisFrame =>
+        input.Player.Whistle.WasPressedThisFrame();
 
-    // Check if whistle was pressed this frame
-    public bool WhistlePressedThisFrame => input.Player.Whistle.WasPressedThisFrame();
+    public bool FirePressedThisFrame =>
+        input.Player.Fire.WasPressedThisFrame();
 
-    public bool FireHeld => input.Player.Fire.IsPressed();
-
-    public bool FirePressedThisFrame => input.Player.Fire.WasPressedThisFrame();
+    public bool FireHeld =>
+        input.Player.Fire.IsPressed();
 }

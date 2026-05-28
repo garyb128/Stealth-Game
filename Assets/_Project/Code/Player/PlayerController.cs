@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour
 
 
     [Header("References")]
-    [SerializeField] CinemachineCamera cam;
+    [SerializeField] Camera cam;
 
     // State
     bool isGrounded;
@@ -66,10 +66,14 @@ public class PlayerController : MonoBehaviour
 
     void Awake()
     {
+        // Get components
         controller = GetComponent<CharacterController>();
         input = GetComponent<PlayerInputHandler>();
         noise = GetComponent<PlayerNoise>();
         groundCheck = GetComponentInChildren<GroundCheck>();
+
+        if (cam == null)
+            cam = Camera.main;
 
         standingHeight = controller.height;
     }
@@ -137,7 +141,7 @@ public class PlayerController : MonoBehaviour
         //MUST BE GROUNDED OR IF IN THE AIR MUST SATISFY QUIETLAND
         bool canCrouch = isGrounded || canQuietLand;
 
-        if (input.CrouchToggledThisFrame && canCrouch)
+        if (input.CrouchPressedThisFrame && canCrouch)
         {
             isCrouching = !isCrouching;
         }

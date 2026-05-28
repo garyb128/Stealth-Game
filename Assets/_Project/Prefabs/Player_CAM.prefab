@@ -838,7 +838,7 @@ PrefabInstance:
     - target: {fileID: 3644452618431080949, guid: 1a119c710ef7bda4e8aca1568475ada8, type: 3}
       propertyPath: cam
       value: 
-      objectReference: {fileID: 2985739425147942200}
+      objectReference: {fileID: 0}
     - target: {fileID: 3644452618431080949, guid: 1a119c710ef7bda4e8aca1568475ada8, type: 3}
       propertyPath: jumpHeight
       value: 2.5
@@ -898,6 +898,10 @@ PrefabInstance:
     - target: {fileID: 6164505211326980792, guid: 1a119c710ef7bda4e8aca1568475ada8, type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6165682970348309055, guid: 1a119c710ef7bda4e8aca1568475ada8, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7767624993848542141, guid: 1a119c710ef7bda4e8aca1568475ada8, type: 3}
       propertyPath: orthographic
@@ -995,6 +999,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af1d503f2fea67a45b8617fc9ead6d43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NoiseSystem
+  MaxNoiseRadius: 20
 --- !u!114 &8475216997730596954
 MonoBehaviour:
   m_ObjectHideFlags: 0
