@@ -5,6 +5,7 @@ public class ThirdPersonCamera : MonoBehaviour
     [Header("Target")]
     [SerializeField] Transform cameraPivot;
     [SerializeField] PlayerInputHandler input;
+    [SerializeField] PlayerController playerController; // PlayerController reference
 
     [Header("Follow Settings")]
     [SerializeField] Vector3 offset = new Vector3(0, 2, -4f);
@@ -15,6 +16,11 @@ public class ThirdPersonCamera : MonoBehaviour
     [SerializeField] float lookSmoothTime = 0.1f;
     [SerializeField] float minPitch = -40f;
     [SerializeField] float maxPitch = 75f;
+
+    [Header("Aiming Zoom")]
+    [SerializeField] Vector3 aimOffset = new Vector3(0, 1.5f, -2f);
+    [SerializeField] float zoomSpeed = 5f; // how fast camera zooms in/out
+    Vector3 currentOffset; // smoothly interpolated offset
 
     [Header("Collision")]
     [SerializeField] LayerMask collisionMask = ~0;
@@ -33,6 +39,10 @@ public class ThirdPersonCamera : MonoBehaviour
     {
         currentCollisionDistance = offset.magnitude;
 
+
+        // Get offset
+        currentOffset = offset;
+
         // Exclude the layer of the cameraPivot (assumed to be the player's layer)
         collisionMask &= ~(1 << cameraPivot.gameObject.layer);
     }
@@ -43,6 +53,7 @@ public class ThirdPersonCamera : MonoBehaviour
         {
             HandleLook();
             HandleRotation();
+            UpdateZoomOffset();
             HandlePosition();
         }
     }
@@ -66,7 +77,7 @@ public class ThirdPersonCamera : MonoBehaviour
     void HandlePosition()
     {
         // Calculate desired camera position in world space
-        Vector3 desiredOffset = cameraPivot.rotation * offset;
+        Vector3 desiredOffset = cameraPivot.rotation * currentOffset;
         Vector3 desiredPosition = cameraPivot.position + desiredOffset;
 
         // Cast from desired position back to pivot to check for obstacles
@@ -87,7 +98,19 @@ public class ThirdPersonCamera : MonoBehaviour
         // Smooth movement
         transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref currentVelocity, positionSmoothTime);
 
+        Vector3 lookTarget = cameraPivot.position;
+        if(playerController != null && playerController.isAiming)
+        {
+            lookTarget = cameraPivot.position + cameraPivot.forward * 5f; // or a serialized float
+        }
+
         // Always look at pivot
-        transform.LookAt(cameraPivot.position);
+        transform.LookAt(lookTarget);
+    }
+
+    void UpdateZoomOffset()
+    {
+        Vector3 targetOffset = playerController != null && playerController.isAiming ? aimOffset : offset;
+        currentOffset = Vector3.Lerp(currentOffset, targetOffset, zoomSpeed * Time.deltaTime);
     }
 }

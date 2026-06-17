@@ -46,18 +46,15 @@ public class PlayerInputHandler : MonoBehaviour
     }
 
     // Buttons (polling is correct here)
-    public bool JumpPressedThisFrame =>
-        input.Player.Jump.WasPressedThisFrame();
+    public bool JumpPressedThisFrame => input.Player.Jump.WasPressedThisFrame();
 
-    public bool CrouchPressedThisFrame =>
-        input.Player.Crouch.WasPressedThisFrame();
+    public bool CrouchPressedThisFrame => input.Player.Crouch.WasPressedThisFrame();
 
-    public bool WhistlePressedThisFrame =>
-        input.Player.Whistle.WasPressedThisFrame();
+    public bool WhistlePressedThisFrame => input.Player.Whistle.WasPressedThisFrame();
 
-    public bool FirePressedThisFrame =>
-        input.Player.Fire.WasPressedThisFrame();
+    public bool FirePressedThisFrame => input.Player.Fire.WasPressedThisFrame();
 
-    public bool FireHeld =>
-        input.Player.Fire.IsPressed();
+    public bool FireHeld => input.Player.Fire.IsPressed();
+
+    public bool AimHeld => input.Player.Aim.IsPressed();
 }

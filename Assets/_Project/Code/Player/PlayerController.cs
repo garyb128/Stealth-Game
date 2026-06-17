@@ -1,3 +1,4 @@
+using NUnit.Framework.Interfaces;
 using Unity.Cinemachine;
 using UnityEngine;
 
@@ -34,7 +35,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float distanceToGround;
     [SerializeField] LayerMask groundMask;
 
-
     [Header("References")]
     [SerializeField] Camera cam;
 
@@ -42,6 +42,7 @@ public class PlayerController : MonoBehaviour
     bool isGrounded;
     bool wasGrounded;
     bool isCrouching;
+    [HideInInspector] public bool isAiming;
 
     float speed;
     float standingHeight;
@@ -89,6 +90,9 @@ public class PlayerController : MonoBehaviour
         Vector3 moveDir = GetMoveDirection();
         HandleRotation(moveDir);
         HandleMovement(moveDir);
+
+        // Check if player is aiming
+        isAiming = input.AimHeld && isGrounded;
 
         HandleJump();
         ApplyGravity();
@@ -172,6 +176,16 @@ public class PlayerController : MonoBehaviour
 
     void HandleRotation(Vector3 moveDir)
     {
+        // Grab camera forward for aiming
+        Vector3 aimDirection = cam.transform.forward;
+        aimDirection.y = 0f;
+        aimDirection.Normalize();
+
+        if (isAiming)
+        {
+            moveDir = aimDirection;
+        }
+
         if (moveDir.sqrMagnitude < turnInputThreshold)
         {
             turnBlend = Mathf.MoveTowards(turnBlend, 0f, turnDecel * Time.deltaTime);
@@ -206,6 +220,9 @@ public class PlayerController : MonoBehaviour
 
     void HandleJump()
     {
+        if (isAiming) // Can't jump if aiming
+            return;
+
         if (input.JumpPressedThisFrame)
             jumpBufferCounter = jumpBufferTime;
         else

@@ -856,6 +856,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponController
   currentWeapon: {fileID: 834394732}
   input: {fileID: 914947742}
+--- !u!114 &1598602318 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2713997672310293680, guid: 303e081e9a7f21945bac667c7b2c5ed9, type: 3}
+  m_PrefabInstance: {fileID: 914947740}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 914947741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f95fe7ea34d03e4580cd8ba397f4816, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerController
 --- !u!1 &1768606041
 GameObject:
   m_ObjectHideFlags: 0
@@ -955,12 +966,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ThirdPersonCamera
   cameraPivot: {fileID: 1010525460}
   input: {fileID: 914947742}
+  playerController: {fileID: 1598602318}
   offset: {x: 0, y: 2, z: -4}
   positionSmoothTime: 0.05
   sensitivity: 10
   lookSmoothTime: 0.1
   minPitch: -40
   maxPitch: 75
+  aimOffset: {x: 1, y: 1.5, z: -2}
+  zoomSpeed: 5
   collisionMask:
     serializedVersion: 2
     m_Bits: 4294967295
