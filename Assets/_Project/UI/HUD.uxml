@@ -1,46 +1,13 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
     <ui:VisualElement name="hud-root" style="width: 100%; height: 100%; position: absolute;">
-
-        <!-- Light Label -->
-        <ui:Label name="light-label" text="L" 
-            style="position: absolute; left: 22px; bottom: 175px; 
-                   color: rgb(255, 220, 50); font-size: 12px;"/>
-
-        <!-- Light Meter -->
-        <ui:VisualElement name="light-meter-container"
-            style="position: absolute; left: 20px; bottom: 20px; 
-                   width: 20px; height: 150px; 
-                   background-color: rgba(0, 0, 0, 0.71); 
-                   border-radius: 4px; padding: 2px;
-                   border-left-color: rgb(255, 255, 255);
-                   border-right-color: rgb(255, 255, 255);
-                   border-top-color: rgb(255, 255, 255);
-                   border-bottom-color: rgb(255, 255, 255);
-                   border-top-width: 0.1px; border-right-width: 0.1px; 
-                   border-bottom-width: 0.1px; border-left-width: 0.1px;">
-            <ui:VisualElement name="light-meter-fill"
-                style="width: 100%; height: 0%; 
-                       background-color: rgb(255, 220, 50); 
-                       border-radius: 3px; position: absolute; bottom: 0; left: 0;"/>
+        <ui:Label name="light-label" text="L" style="position: absolute; left: 22px; bottom: 175px; color: rgb(255, 220, 50); font-size: 12px;"/>
+        <ui:VisualElement name="light-meter-container" style="position: absolute; left: 20px; bottom: 20px; width: 20px; height: 150px; background-color: rgba(0, 0, 0, 0.71); border-radius: 4px; padding: 2px; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); border-top-width: 0.1px; border-right-width: 0.1px; border-bottom-width: 0.1px; border-left-width: 0.1px;">
+            <ui:VisualElement name="light-meter-fill" style="width: 100%; height: 0%; background-color: rgb(255, 220, 50); border-radius: 3px; position: absolute; bottom: 0; left: 0;"/>
         </ui:VisualElement>
-
-
-        <!-- Noise Label -->
-        <ui:Label name="noise-label" text="N"
-            style="position: absolute; left: 52px; bottom: 175px; 
-                   color: rgb(100,200,255); font-size: 12px;"/>
-
-        <!-- Noise Meter -->
-        <ui:VisualElement name="noise-meter-container"
-            style="position: absolute; left: 50px; bottom: 20px; 
-                   width: 20px; height: 150px; 
-                   background-color: rgba(0,0,0,0.5); 
-                   border-radius: 4px; padding: 2px;">
-            <ui:VisualElement name="noise-meter-fill"
-                style="width: 100%; height: 0%; 
-                       background-color: rgb(100, 200, 255); 
-                       border-radius: 3px; position: absolute; bottom: 0; left: 0;"/>
+        <ui:Label name="noise-label" text="N" style="position: absolute; left: 52px; bottom: 175px; color: rgb(100, 200, 255); font-size: 12px;"/>
+        <ui:VisualElement name="noise-meter-container" style="position: absolute; left: 50px; bottom: 20px; width: 20px; height: 150px; background-color: rgba(0, 0, 0, 0.5); border-radius: 4px; padding: 2px;">
+            <ui:VisualElement name="noise-meter-fill" style="width: 100%; height: 0%; background-color: rgb(100, 200, 255); border-radius: 3px; position: absolute; bottom: 0; left: 0;"/>
         </ui:VisualElement>
-
+        <ui:Image name="crosshair" enabled="true" style="background-image: url(&quot;project://database/Assets/_Project/UI/Sprites/crosshair007.png?fileID=2800000&amp;guid=4308381ad9a67874e9a445f22eeab671&amp;type=3#crosshair007&quot;); height: 450px; background-size: 32px 32px; position: relative; top: 50%; left: 50%; translate: -50% -50%;"/>
     </ui:VisualElement>
 </ui:UXML>

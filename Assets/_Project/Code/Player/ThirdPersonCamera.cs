@@ -21,6 +21,8 @@ public class ThirdPersonCamera : MonoBehaviour
     [SerializeField] Vector3 aimOffset = new Vector3(0, 1.5f, -2f);
     [SerializeField] float zoomSpeed = 5f; // how fast camera zooms in/out
     Vector3 currentOffset; // smoothly interpolated offset
+    Vector3 smoothedDesiredLookTarget;
+
 
     [Header("Collision")]
     [SerializeField] LayerMask collisionMask = ~0;
@@ -39,12 +41,13 @@ public class ThirdPersonCamera : MonoBehaviour
     {
         currentCollisionDistance = offset.magnitude;
 
-
         // Get offset
         currentOffset = offset;
 
         // Exclude the layer of the cameraPivot (assumed to be the player's layer)
         collisionMask &= ~(1 << cameraPivot.gameObject.layer);
+
+        smoothedDesiredLookTarget = cameraPivot.position;
     }
 
     void LateUpdate()
@@ -98,14 +101,21 @@ public class ThirdPersonCamera : MonoBehaviour
         // Smooth movement
         transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref currentVelocity, positionSmoothTime);
 
-        Vector3 lookTarget = cameraPivot.position;
-        if(playerController != null && playerController.isAiming)
+        // What we really want to look at
+        Vector3 rawLookTarget = cameraPivot.position;
+        if (playerController != null && playerController.isAiming)
         {
-            lookTarget = cameraPivot.position + cameraPivot.forward * 5f; // or a serialized float
+            rawLookTarget = cameraPivot.position + cameraPivot.forward * 5f;
         }
 
+        // Smoothly move towards desired target
+        smoothedDesiredLookTarget = Vector3.Lerp(
+            smoothedDesiredLookTarget,
+            rawLookTarget,
+            zoomSpeed * Time.deltaTime);
+
         // Always look at pivot
-        transform.LookAt(lookTarget);
+        transform.LookAt(smoothedDesiredLookTarget);
     }
 
     void UpdateZoomOffset()

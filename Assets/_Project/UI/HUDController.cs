@@ -4,19 +4,23 @@ using UnityEngine.UIElements;
 public class HUDController : MonoBehaviour
 {
     PlayerExposure playerExposure;
+    PlayerController playerController;
 
     VisualElement lightMeterFill;
     VisualElement noiseMeterFill;
+    VisualElement crosshair;
 
     void OnEnable()
     {
         var root = GetComponent<UIDocument>().rootVisualElement;
         lightMeterFill = root.Q<VisualElement>("light-meter-fill");
         noiseMeterFill = root.Q<VisualElement>("noise-meter-fill");
+        crosshair = root.Q<VisualElement>("crosshair");
 
         // Find player and get the Exposure
         var player = GameObject.FindWithTag("Player");
         playerExposure = player.GetComponentInChildren<PlayerExposure>();
+        playerController = player.GetComponentInChildren<PlayerController>();
     }
 
     void Update()
@@ -43,6 +47,12 @@ public class HUDController : MonoBehaviour
         {
             float loudness = NoiseSystem.Instance.CurrentNoiseLoudness;
             noiseMeterFill.style.height = Length.Percent(loudness * 100f);
+        }
+
+        // Show/hide crosshair
+        if(crosshair != null && playerController != null)
+        {
+            crosshair.style.display = playerController.isAiming ? DisplayStyle.Flex : DisplayStyle.None;
         }
     }
 }
