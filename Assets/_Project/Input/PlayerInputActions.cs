@@ -324,6 +324,17 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""1703b5f3-0388-42e2-911e-0c80195dbf59"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Fire"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""2fdd36a6-7fa0-4647-9930-234e7ca2ce09"",
                     ""path"": ""<Gamepad>/leftTrigger"",
                     ""interactions"": """",

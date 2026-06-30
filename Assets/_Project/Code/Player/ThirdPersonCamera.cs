@@ -9,13 +9,21 @@ public class ThirdPersonCamera : MonoBehaviour
 
     [Header("Follow Settings")]
     [SerializeField] Vector3 offset = new Vector3(0, 2, -4f);
-    [SerializeField] float positionSmoothTime = 0.05f;
+    [SerializeField] float positionSmoothTime = 0.01f;
+    [SerializeField] float lookTargetSmoothSpeed = 15f; // fast
 
     [Header("Look Settings")]
     [SerializeField] float sensitivity = 1.5f;
     [SerializeField] float lookSmoothTime = 0.1f;
     [SerializeField] float minPitch = -40f;
     [SerializeField] float maxPitch = 75f;
+
+    [Header("FOV Settings")]
+    float baseFOV;
+    [SerializeField] float aimFOVMultiplier = 0.5f; // 0.5 = 50% of base when aiming
+    [SerializeField] float fovSmoothTime = 0.1f;
+    float currentFOV;
+    float fovVelocity;
 
     [Header("Aiming Zoom")]
     [SerializeField] Vector3 aimOffset = new Vector3(0, 1.5f, -2f);
@@ -36,9 +44,18 @@ public class ThirdPersonCamera : MonoBehaviour
     Vector3 currentVelocity;
     float currentCollisionDistance;
     float collisionVelocity;
+    Camera cam;
 
     void Start()
     {
+        // Get camera's FOV
+        cam = GetComponent<Camera>();
+        if (cam != null)
+        {
+            baseFOV = cam.fieldOfView;
+            currentFOV = baseFOV;
+        }
+
         currentCollisionDistance = offset.magnitude;
 
         // Get offset
@@ -57,8 +74,19 @@ public class ThirdPersonCamera : MonoBehaviour
             HandleLook();
             HandleRotation();
             UpdateZoomOffset();
+            UpdateFOV();
             HandlePosition();
         }
+    }
+
+    void UpdateFOV()
+    {
+        float targetFOV = (playerController != null & playerController.isAiming) ? baseFOV * aimFOVMultiplier : baseFOV;
+
+        currentFOV = Mathf.SmoothDamp(currentFOV, targetFOV, ref fovVelocity, fovSmoothTime);
+
+        if (cam != null)
+            cam.fieldOfView = currentFOV;
     }
 
     void HandleLook()
@@ -109,10 +137,7 @@ public class ThirdPersonCamera : MonoBehaviour
         }
 
         // Smoothly move towards desired target
-        smoothedDesiredLookTarget = Vector3.Lerp(
-            smoothedDesiredLookTarget,
-            rawLookTarget,
-            zoomSpeed * Time.deltaTime);
+        smoothedDesiredLookTarget = Vector3.Lerp(smoothedDesiredLookTarget, rawLookTarget, lookTargetSmoothSpeed * Time.deltaTime);
 
         // Always look at pivot
         transform.LookAt(smoothedDesiredLookTarget);

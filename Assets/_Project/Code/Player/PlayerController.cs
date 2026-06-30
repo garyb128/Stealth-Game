@@ -176,43 +176,54 @@ public class PlayerController : MonoBehaviour
 
     void HandleRotation(Vector3 moveDir)
     {
-        // Grab camera forward for aiming
-        Vector3 aimDirection = cam.transform.forward;
-        aimDirection.y = 0f;
-        aimDirection.Normalize();
+        // Determine target direction
+        Vector3 targetDir = Vector3.zero;
 
         if (isAiming)
         {
-            moveDir = aimDirection;
+            // Aiming: face camera forward
+            Vector3 camForward = cam.transform.forward;
+            camForward.y = 0f;
+            camForward.Normalize();
+            targetDir = camForward;
+        }
+        else
+        {
+            // Not aiming: face movement direction if there is any input
+            // Use a tiny epsilon to catch even the slightest stick movement
+            if (moveDir.sqrMagnitude > 0.00001f) // practically zero
+            {
+                targetDir = moveDir.normalized;
+            }
         }
 
-        if (moveDir.sqrMagnitude < turnInputThreshold)
+        // If no valid direction, decelerate blend and exit
+        if (targetDir.sqrMagnitude < 0.0001f)
         {
             turnBlend = Mathf.MoveTowards(turnBlend, 0f, turnDecel * Time.deltaTime);
             return;
         }
 
-        Quaternion targetRot = Quaternion.LookRotation(moveDir);
+        // Accelerate blending
+        turnBlend = Mathf.MoveTowards(turnBlend, 1f, turnAccel * Time.deltaTime);
+
+        // Base speed (multiplier for Slerp – higher = faster rotation)
         float baseSpeed = isCrouching ? turnSpeedCrouched : turnSpeedStanding;
 
-        float angle = Quaternion.Angle(transform.rotation, targetRot);
-        float targetBlend = angle > 0.1f ? 1f : 0f;
+        // Slerp factor – larger values make rotation snappier
+        float slerpFactor = baseSpeed * turnBlend * Time.deltaTime;
+        // Clamp to avoid overshoot (optional)
+        slerpFactor = Mathf.Clamp(slerpFactor, 0f, 1f);
 
-        float rate = targetBlend > turnBlend ? turnAccel : turnDecel;
-        turnBlend = Mathf.MoveTowards(turnBlend, targetBlend, rate * Time.deltaTime);
-
-        transform.rotation = Quaternion.Slerp(
-            transform.rotation,
-            targetRot,
-            baseSpeed * turnBlend * Time.deltaTime
-        );
+        Quaternion targetRot = Quaternion.LookRotation(targetDir);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, slerpFactor);
     }
 
     void HandleMovement(Vector3 moveDir)
     {
         bool hasInput = moveDir.sqrMagnitude > 0.0001f;
 
-        Vector3 target = hasInput ? moveDir.normalized * speed : Vector3.zero;
+        Vector3 target = hasInput ? moveDir * speed : Vector3.zero;
         float rate = hasInput ? acceleration : deceleration;
 
         planarVelocity = Vector3.MoveTowards(planarVelocity, target, rate * Time.deltaTime);

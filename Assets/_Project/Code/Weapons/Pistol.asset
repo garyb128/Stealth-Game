@@ -21,4 +21,4 @@ MonoBehaviour:
   muzzleVelocity: 1000
   gravity: 9.81
   maxSimulationTime: 2
-  spreadAngle: 1
+  spreadAngle: 0.1

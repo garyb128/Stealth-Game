@@ -969,10 +969,13 @@ MonoBehaviour:
   playerController: {fileID: 1598602318}
   offset: {x: 0, y: 2, z: -4}
   positionSmoothTime: 0.05
+  lookTargetSmoothSpeed: 15
   sensitivity: 10
   lookSmoothTime: 0.1
   minPitch: -40
-  maxPitch: 75
+  maxPitch: 60
+  aimFOVMultiplier: 0.5
+  fovSmoothTime: 0.1
   aimOffset: {x: 1, y: 1.5, z: -2}
   zoomSpeed: 5
   collisionMask:
@@ -1065,7 +1068,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 75
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
