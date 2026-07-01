@@ -57,4 +57,8 @@ public class PlayerInputHandler : MonoBehaviour
     public bool FireHeld => input.Player.Fire.IsPressed();
 
     public bool AimHeld => input.Player.Aim.IsPressed();
+
+    public bool SwitchWeapon => input.Player.Weapon.WasPressedThisFrame();
+
+    public bool Reload => input.Player.Reload.WasPressedThisFrame();
 }

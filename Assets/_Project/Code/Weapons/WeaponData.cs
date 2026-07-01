@@ -17,11 +17,14 @@ public class WeaponData : ScriptableObject
     [Header("Firing")]
     public float roundsPerMinute = 600f;
     public bool automatic;
+    public float reloadTime;
 
     [Space(10)]
 
     [Header("Ammo")]
-    public int maxAmmo;
+    public int magazineSize;
+    public int startingReserveAmmo;
+    // possible ammo type?
 
     [Space(10)]
 
